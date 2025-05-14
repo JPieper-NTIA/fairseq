@@ -59,8 +59,9 @@ def gen_parser_from_dataclass(
     """
     convert a dataclass instance to tailing parser arguments.
 
-    If `with_prefix` is provided, prefix all the keys in the resulting parser with it. It means that we are
-    building a flat namespace from a structured dataclass (see transformer_config.py for example).
+    If `with_prefix` is provided, prefix all the keys in the resulting parser with it.
+    It means that we are building a flat namespace from a structured dataclass
+    (see transformer_config.py for example).
     """
 
     def argparse_name(name: str):
@@ -160,11 +161,13 @@ def gen_parser_from_dataclass(
             continue
         elif inspect.isclass(field_type) and issubclass(field_type, FairseqDataclass):
             # for fields that are of type FairseqDataclass, we can recursively
-            # add their fields to the namespace (so we add the args from model, task, etc. to the root namespace)
+            # add their fields to the namespace (so we add the args from model,
+            # task, etc. to the root namespace)
             prefix = None
             if with_prefix is not None:
-                # if a prefix is specified, then we don't want to copy the subfields directly to the root namespace
-                # but we prefix them with the name of the current field.
+                # if a prefix is specified, then we don't want to copy the
+                # subfields directly to the root namespace but we prefix them
+                # with the name of the current field.
                 prefix = field_name
             gen_parser_from_dataclass(parser, field_type(), delete_default, prefix)
             continue
@@ -257,7 +260,8 @@ def _override_attr(
             # skip interpolation
             and not (isinstance(val, str) and val.startswith("${"))
         ):
-            # if type is int but val is float, then we will crash later - try to convert here
+            # if type is int but val is float, then we will crash later - try to
+            # convert here
             if hasattr(v.type, "__args__"):
                 t_args = v.type.__args__
                 if len(t_args) == 1 and (t_args[0] is float or t_args[0] is int):
@@ -364,7 +368,8 @@ def override_module_args(args: Namespace) -> Tuple[List[str], List[str]]:
 
 class omegaconf_no_object_check:
     def __init__(self):
-        # Changed in https://github.com/omry/omegaconf/pull/911 - both are kept for back compat.
+        # Changed in https://github.com/omry/omegaconf/pull/911 - both are kept
+        # for back compat.
         if hasattr(_utils, "is_primitive_type"):
             self.old_is_primitive = _utils.is_primitive_type
         else:
@@ -386,7 +391,8 @@ class omegaconf_no_object_check:
 def convert_namespace_to_omegaconf(args: Namespace) -> DictConfig:
     """Convert a flat argparse.Namespace to a structured DictConfig."""
 
-    # Here we are using field values provided in args to override counterparts inside config object
+    # Here we are using field values provided in args to override counterparts
+    # inside config object
     overrides, deletes = override_module_args(args)
 
     # configs will be in fairseq/config after installation
@@ -408,8 +414,9 @@ def convert_namespace_to_omegaconf(args: Namespace) -> DictConfig:
         OmegaConf.to_container(composed_cfg, resolve=True, enum_to_str=True)
     )
 
-    # hack to be able to set Namespace in dict config. this should be removed when we update to newer
-    # omegaconf version that supports object flags, or when we migrate all existing models
+    # hack to be able to set Namespace in dict config. this should be removed when
+    #  we update to newer omegaconf version that supports object flags, or when
+    # we migrate all existing models
     from omegaconf import _utils
 
     with omegaconf_no_object_check():

@@ -2,7 +2,6 @@
 # defaults:
 #   - hydra/launcher: submitit_slurm
 
-# @package _group_
 
 task:
   _name: audio_finetuning
