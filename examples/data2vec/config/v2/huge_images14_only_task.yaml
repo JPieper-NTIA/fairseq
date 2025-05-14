@@ -1,4 +1,3 @@
-# @package _group_
 
 common:
   fp16: true

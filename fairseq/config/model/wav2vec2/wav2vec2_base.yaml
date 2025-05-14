@@ -1,4 +1,3 @@
-# @package _group_
 
 quantize_targets: true
 final_dim: 256
